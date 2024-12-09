@@ -42,9 +42,10 @@ E(max_space) = 0;
 gamma = -1/eps0 * dt/dz;
 tau = -1/mu0 * dt/dz;
 
+figure
 for n=1:max_time
     t = (n-1) * dt;
-    
+
     % Equation : calcul du champ electrique
     for k = 2:max_space - 1
         E(k) = E(k) + gamma * (H(k) - H(k-1));
@@ -61,15 +62,16 @@ for n=1:max_time
     for k = 1:max_space-1
         H(k) = H(k) + tau * (E(k+1) - E(k));
     end
+
+    %% Visualisation des champs
+    subplot(1, 2, 1);
+    plot(E)
+    title("Champ E", "alpha="+alpha+", time="+time)
+
+    subplot(1, 2, 2);
+    plot(H)
+    title("Champ H")
+    pause(0.1)
 end
 
-%% Visualisation des champs
-figure
-subplot(1, 2, 1);
-plot(E)
-title("Champ E", "alpha="+alpha+", time="+time)
-
-subplot(1, 2, 2);
-plot(H)
-title("Champ H")
 end

@@ -42,6 +42,7 @@ E(max_space) = 0;
 gamma = -1/eps0 * dt/dz;
 tau = -1/mu0 * dt/dz;
 
+figure
 for n=1:max_time
     t = (n-1) * dt;
     
@@ -49,27 +50,26 @@ for n=1:max_time
     for k = 2:max_space - 1
         E(k) = E(k) + gamma * (H(k) - H(k-1));
     end
-
-    % Source
-    %E(center) = exp(-((t-t0)/spread) * ((t-t0)/spread));
     
     % Hard source
+    %if n<=60
     pulse = exp(-1*((t-t0)/spread)^2);
-    E(center) = pulse;
-
+    E(center) = E(center) + pulse;
+    %end
     % Calcul du champ magnétique
     for k = 1:max_space-1
         H(k) = H(k) + tau * (E(k+1) - E(k));
     end
+
+    %% Visualisation des champs
+    subplot(1, 2, 1);
+    plot(E)
+    title("Champ E", "alpha="+alpha+", time="+time)
+    
+    subplot(1, 2, 2);
+    plot(H)
+    title("Champ H")
+    pause(0.1)
 end
 
-%% Visualisation des champs
-figure
-subplot(1, 2, 1);
-plot(E)
-title("Champ E", "alpha="+alpha+", time="+time)
-
-subplot(1, 2, 2);
-plot(H)
-title("Champ H")
 end
