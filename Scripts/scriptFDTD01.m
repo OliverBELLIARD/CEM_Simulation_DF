@@ -64,7 +64,7 @@ for n=1:max_time
 end
 
 %% Visualisation des champs
-figure(1)
+figure
 subplot(1, 2, 1);
 plot(E)
 title("Champ E", "alpha="+alpha+", time="+time)
