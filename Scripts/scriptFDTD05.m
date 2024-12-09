@@ -10,6 +10,7 @@ end
 
 %% Définition des constantes
 eps0 = 8.854e-12;  % Permittivité du vide en F/m
+epsr = 4;
 mu0 = 4*pi*1e-7;
 
 %% Maillage : discretisation spatiale
@@ -18,7 +19,6 @@ max_space = 501; % nb de points spatiaux (nb de champ E)
 dz = L/(max_space-1);
 
 %% Discretisation temporelle;
-%alpha = 1;
 max_time = time / alpha;
 dt = alpha * sqrt(eps0*mu0)*dz;
 
@@ -40,11 +40,15 @@ tau = -1/mu0 * dt/dz;
 %% source
 center = 2;
 t0 = 400*dt;
-spread = 1.6e-11;
+spread = 1.6e-11; % Nous devons impérativement diminuer le spread
 
 %% Conditions absorbantes
 temp(1) = 0;
 temp(2) = 0;
+
+%% Dielectrique
+dielec_deb = 300;
+dielec_fin = 400;
 
 %% Discretisation suivant z
 for k=1:max_space
@@ -55,7 +59,7 @@ end
 figure
 for n=1:max_time
     t = (n-1) * dt;
-    
+
     % Equation : calcul du champ electrique
     for k = 2:max_space - 1
         E(k) = E(k) + gamma * (H(k) - H(k-1));
@@ -70,7 +74,7 @@ for n=1:max_time
     temp(1) = E(2);
     E(max_space) = temp(2);
     temp(2) = E(max_space-1);
-    
+
     % Calcul du champ magnétique
     for k = 1:max_space-1
         H(k) = H(k) + tau * (E(k+1) - E(k));
@@ -78,11 +82,11 @@ for n=1:max_time
 
     % Visualisation des champs
     plot(zE, E)
-    title("Champ E", "alpha="+alpha+", max_time="+max_time)
+    title("Champ E", "alpha="+alpha+", max\_time="+max_time)
     ylabel("E [V/m]")
     xlabel("z (position dans l'espace) [m]")
-    %axis([0 2 -1.1 1.1])
-    pause(0.05)
+    axis([0 L -1 1])
+    pause(0.005)
 end
 
 end
