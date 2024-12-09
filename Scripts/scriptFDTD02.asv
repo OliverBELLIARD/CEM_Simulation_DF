@@ -67,7 +67,7 @@ end
 figure
 subplot(1, 2, 1);
 plot(E)
-title("Champ E", "alpha="+alpha+", time="+time)
+title("Champ E")
 
 subplot(1, 2, 2);
 plot(H)
