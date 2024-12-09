@@ -86,7 +86,7 @@ for n=1:max_time
     title("Champ E", "alpha="+alpha+", time="+time)
     ylabel("E [V/m]")
     xlabel("z (position dans l'espace) [m]")
-    axis([0 2 -1.5 1.5])
+    axis([0 2 -1.1 1.1])
     pause(0.05)
 end
 

@@ -22,7 +22,7 @@ dz = L/(max_space-1);
 max_time = time / alpha;
 dt = alpha * sqrt(eps0*mu0)*dz;
 
-%source
+%% source
 center = 101;
 t0 = 40*dt;
 spread = 1.6e-10;

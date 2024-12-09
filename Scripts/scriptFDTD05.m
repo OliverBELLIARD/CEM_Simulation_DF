@@ -1,8 +1,8 @@
-function scriptFDTD03(time, alpha)
-%% Calcul FDTD (Finite Difference in Time Domain) - Ondes planes dans l'espace
+function scriptFDTD05(time, alpha)
+%% Calcul FDTD (Finite Difference in Time Domain) - Magic-time step
 % Valeurs par défaut en cas de non arguments
 if nargin < 1
-    time = 100;
+    time = 1500;
 end
 if nargin < 2
     alpha = 1;
@@ -13,8 +13,8 @@ eps0 = 8.854e-12;  % Permittivité du vide en F/m
 mu0 = 4*pi*1e-7;
 
 %% Maillage : discretisation spatiale
-L = 2; % longueur du domaine de calcul
-max_space = 201; % nb de points spatiaux (nb de champ E)
+L = 0.5; % longueur du domaine de calcul
+max_space = 501; % nb de points spatiaux (nb de champ E)
 dz = L/(max_space-1);
 
 %% Discretisation temporelle;
@@ -37,18 +37,14 @@ E(max_space) = 0;
 gamma = -1/eps0 * dt/dz;
 tau = -1/mu0 * dt/dz;
 
+%% source
+center = 2;
+t0 = 400*dt;
+spread = 1.6e-11;
+
 %% Conditions absorbantes
 temp(1) = 0;
 temp(2) = 0;
-
-%% Source spatiale
-spread = 1.6e-10;
-z0 = 1; % position du centre du domaine
-c0 = 1./sqrt(eps0*mu0); % vitesse de propagation
-vecz = (1:max_space-2)*dz;
-gamma2 = (vecz-z0)./c0;
-pulse2 = exp(-1*(gamma2./spread).^2);
-E(2:max_space-1) = pulse2;
 
 %% Discretisation suivant z
 for k=1:max_space
@@ -65,7 +61,11 @@ for n=1:max_time
         E(k) = E(k) + gamma * (H(k) - H(k-1));
     end
 
-    % Absorption aux limites
+    % Soft source
+    pulse = exp(-1*((t-t0)/spread)^2);
+    E(center) = E(center) + pulse;
+
+    % Conditions d'absorption magic-time step
     E(1) = temp(1);
     temp(1) = E(2);
     E(max_space) = temp(2);
@@ -78,10 +78,10 @@ for n=1:max_time
 
     % Visualisation des champs
     plot(zE, E)
-    title("Champ E", "alpha="+alpha+", time="+time)
+    title("Champ E", "alpha="+alpha+", max_time="+max_time)
     ylabel("E [V/m]")
     xlabel("z (position dans l'espace) [m]")
-    axis([0 2 -1.1 1.1])
+    %axis([0 2 -1.1 1.1])
     pause(0.05)
 end
 
