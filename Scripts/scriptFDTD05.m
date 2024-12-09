@@ -90,10 +90,9 @@ for n=1:max_time
 
     % Visualisation des champs
     hold off;
-    plot(zE, E)
+    area(zE, alphaEdielec-min(alphaEdielec), 'faceColor','c')
     hold on;
-    pd = plot(zE, alphaEdielec)
-    pd.Marker = "square"
+    plot(zE, E)
     title(["Champ E", "\nalpha = " num2str(alpha) ", time = " num2str(time)])
     ylabel("E [V/m]")
     xlabel("z (position dans l'espace) [m]")
