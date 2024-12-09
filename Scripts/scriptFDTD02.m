@@ -1,9 +1,5 @@
 %% Calcul FDTD (Finite Difference in Time Domain) - Ondes planes
-function scriptFDTD01(time, alpha=1)
-    if nargin < 2
-        alpha = 1;
-    end
-
+function scriptFDTD01(time, alpha)
     %% Définition des constantes
     eps0 = 8.854e-12;  % Permittivité du vide en F/m
     mu0 = 4*pi*1e-7;
@@ -59,7 +55,7 @@ function scriptFDTD01(time, alpha=1)
     figure(1)
     subplot(1, 2, 1);
     plot(E)
-    title("Champ E", "alpha="+alpha+", time="+time)
+    title("Champ E")
     
     subplot(1, 2, 2);
     plot(H)
