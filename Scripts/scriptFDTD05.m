@@ -37,22 +37,30 @@ E(max_space) = 0;
 gamma = -1/eps0 * dt/dz;
 tau = -1/mu0 * dt/dz;
 
-%% source
-center = 2;
-t0 = 400*dt;
-spread = 1.6e-11; % Nous devons impérativement diminuer le spread
-
 %% Conditions absorbantes
 temp(1) = 0;
 temp(2) = 0;
 
-%% Dielectrique
-dielec_deb = 300;
-dielec_fin = 400;
+%% source
+start = 2;
+t0 = 40*dt;
+spread = 1.6e-11;
 
 %% Discretisation suivant z
 for k=1:max_space
     zE(k) = (k-1)*dz;
+end
+
+%% Diélectrique
+dielec_deb = 200;
+dielec_fin = 300;
+
+for u=1:max_space
+  if (u>=dielec_deb & u<=dielec_fin)
+    alphaEdielec(u) = gamma./epsr;
+  else
+    alphaEdielec(u) = gamma;
+  end
 end
 
 %% Boucle temporelle
@@ -62,14 +70,14 @@ for n=1:max_time
 
     % Equation : calcul du champ electrique
     for k = 2:max_space - 1
-        E(k) = E(k) + gamma * (H(k) - H(k-1));
+        E(k) = E(k) + alphaEdielec(k)* (H(k) - H(k-1));
     end
 
     % Soft source
     pulse = exp(-1*((t-t0)/spread)^2);
-    E(center) = E(center) + pulse;
+    E(start) = E(start) + pulse;
 
-    % Conditions d'absorption magic-time step
+    % Absorption aux limites
     E(1) = temp(1);
     temp(1) = E(2);
     E(max_space) = temp(2);
@@ -81,12 +89,16 @@ for n=1:max_time
     end
 
     % Visualisation des champs
+    hold off;
     plot(zE, E)
-    title("Champ E", "alpha="+alpha+", max\_time="+max_time)
+    hold on;
+    pd = plot(zE, alphaEdielec)
+    pd.Marker = "square"
+    title(["Champ E", "\nalpha = " num2str(alpha) ", time = " num2str(time)])
     ylabel("E [V/m]")
     xlabel("z (position dans l'espace) [m]")
-    axis([0 L -1 1])
-    pause(0.005)
+    axis([0 L -1.1 1.1])
+    pause(0.001)
 end
 
 end
