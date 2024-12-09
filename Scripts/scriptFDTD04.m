@@ -1,11 +1,11 @@
-function scriptFDTD03(time, alpha)
-%% Calcul FDTD (Finite Difference in Time Domain) - Ondes planes dans l'espace
+function scriptFDTD04(time, alpha)
+%% Calcul FDTD (Finite Difference in Time Domain) - Magic-time step
 % Valeurs par défaut en cas de non arguments
 if nargin < 1
     time = 100;
 end
 if nargin < 2
-    alpha = 1;
+    alpha = 0.5;
 end
 
 %% Définition des constantes
@@ -22,11 +22,6 @@ dz = L/(max_space-1);
 max_time = time / alpha;
 dt = alpha * sqrt(eps0*mu0)*dz;
 
-%source
-center = 101;
-t0 = 40*dt;
-spread = 1.6e-10;
-
 %% Initialisation des champs E et H
 % dimension en H = dimension en E - 1 du au schema
 % conditions aux limites imposees ici pour E(1) et E(max_space)
@@ -42,11 +37,14 @@ E(max_space) = 0;
 gamma = -1/eps0 * dt/dz;
 tau = -1/mu0 * dt/dz;
 
-%% Conditions absorbantes
-temp(1) = 0;
-temp(2) = 0;
+%% Conditions absorbantes pour magic-time step
+tempL(1) = 0;
+tempL(2) = 0;
+tempR(1) = 0;
+tempR(2) = 0;
 
 %% Source spatiale
+spread = 1.6e-10;
 z0 = 1; % position du centre du domaine
 c0 = 1./sqrt(eps0*mu0); % vitesse de propagation
 vecz = (1:max_space-2)*dz;
@@ -68,15 +66,15 @@ for n=1:max_time
     for k = 2:max_space - 1
         E(k) = E(k) + gamma * (H(k) - H(k-1));
     end
-    
-    % Source
-    pulse = exp(-1*((t-t0)/spread)^2);
-    E(center) = pulse;
 
-    E(1) = temp(1);
-    temp(1) = E(2);
-    E(max_space) = temp(2);
-    temp(2) = E(max_space-1);
+    % Conditions d'absorption magic-time step
+    E(1) = tempL(2);
+    tempL(2) = tempL(1);
+    tempL(1) = E(2);
+
+    E(max_space) = tempR(2);
+    tempR(2) = tempR(1);
+    tempR(1) = E(max_space-1);
     
     % Calcul du champ magnétique
     for k = 1:max_space-1
@@ -84,19 +82,12 @@ for n=1:max_time
     end
 
     % Visualisation des champs
-    subplot(1, 2, 1);
     plot(zE, E)
     title("Champ E", "alpha="+alpha+", time="+time)
     ylabel("E [V/m]")
     xlabel("z (position dans l'espace) [m]")
     axis([0 2 -1.5 1.5])
-    
-    subplot(1, 2, 2);
-    plot(H)
-    title("Champ H")
-    ylabel("H [T]")
-    xlabel("z (position dans l'espace) [m]")
-    pause(0.1)
+    pause(0.05)
 end
 
 end
