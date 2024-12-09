@@ -67,10 +67,14 @@ for n=1:max_time
     subplot(1, 2, 1);
     plot(E)
     title("Champ E", "alpha="+alpha+", time="+time)
+    ylabel("E [V]")
+    xlabel("t")
 
     subplot(1, 2, 2);
     plot(H)
     title("Champ H")
+    ylabel("H [T]")
+    xlabel("t")
     pause(0.1)
 end
 
