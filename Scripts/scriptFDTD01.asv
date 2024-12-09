@@ -1,7 +1,5 @@
-%% Calcul FDTD - Ondes planes
-clear
-close all
-clc
+%% Calcul FDTD (Finite Difference in Time Domain - Ondes planes
+clear; close all; clc
 
 %% Définition des constantes
 eps0 = 8.854e-12;  % Permittivité du vide en F/m
@@ -13,8 +11,9 @@ max_space = 201; % nb de points spatiaux (nb de champ E)
 dz = L/(max_space-1);
 
 %% Discretisation temporelle;
-max_time = 100 ;
-dt = sqrt(eps0*mu0)*dz;
+alpha = 1;
+max_time = 100 / alpha;
+dt = alpha * sqrt(eps0*mu0)*dz;
 
 %source
 center = 101;
@@ -24,8 +23,8 @@ spread = 1.6e-10;
 %% Initialisation des champs E et H
 % dimension en H = dimension en E - 1 du au schema
 % conditions aux limites imposees ici pour E(1) et E(max_space)
-E = zeros(max_space);
-H = zeros(max_space-1);
+E = zeros(max_space, 1);
+H = zeros(max_space-1, 1);
 
 %% Conditions aux limites
 % Conditions sur E
@@ -33,19 +32,32 @@ E(1) = 0;
 E(max_space) = 0;
 
 %% Constantes
-gamma = -1/eps0*dt/dz;
-tau = -1/mu0*dt/dz;
+gamma = -1/eps0 * dt/dz;
+tau = -1/mu0 * dt/dz;
 
-for 
-% Equation : calcul du champ électrique
-for k=2:max_space-1
-    E(k) = E(k) + gamma*(H(k)-H(k-1));
+for n=1:max_time
+    t = (n-1) * dt;
+    
+    % Equation : calcul du champ electrique
+    for k = 2:max_space - 1
+        E(k) = E(k) + gamma * (H(k) - H(k-1));
+    end
+
+    % Source
+    E(center) = exp(-((t-t0)/spread) * ((t-t0)/spread));
+
+    % Calcul du champ magnétique
+    for k = 1:max_space-1
+        H(k) = H(k) + tau * (E(k+1) - E(k));
+    end
 end
 
-% Source
-E(center) = exp( -((t-t0)/spread) * ((t-t0/spread)) );
+%% Visualisation des champs
+figure(1)
+subplot(1, 2, 1);
+plot(E)
+title("Champ E")
 
-% Calcul du champ magnetique
-for m=1:max_space-1
-    H(k) = H(k) + tau*(E(k+1)-E(k));
-end
+subplot(1, 2, 2);
+plot(H)
+title("Champ H")
