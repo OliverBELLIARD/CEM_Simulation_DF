@@ -51,7 +51,7 @@ for n=1:max_time
         E(k) = E(k) + gamma * (H(k) - H(k-1));
     end
     
-    % Hard source
+    % Soft source
     %if n<=60
     pulse = exp(-1*((t-t0)/spread)^2);
     E(center) = E(center) + pulse;
@@ -65,7 +65,7 @@ for n=1:max_time
     subplot(1, 2, 1);
     plot(E)
     title("Champ E", "alpha="+alpha+", time="+time)
-    ylabel("E [V]")
+    ylabel("E [V/m]")
     xlabel("t")
     
     subplot(1, 2, 2);

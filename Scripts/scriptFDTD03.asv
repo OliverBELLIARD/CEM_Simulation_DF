@@ -1,5 +1,5 @@
-%% Calcul FDTD (Finite Difference in Time Domain) - Ondes planes
-function scriptFDTD02(time, alpha)
+function scriptFDTD03(time, alpha)
+%% Calcul FDTD (Finite Difference in Time Domain) - Ondes planes dans l'espace
 % Valeurs par défaut en cas de non arguments
 if nargin < 1
     time = 100;
@@ -42,6 +42,25 @@ E(max_space) = 0;
 gamma = -1/eps0 * dt/dz;
 tau = -1/mu0 * dt/dz;
 
+%% Conditions absorbantes
+temp(1) = 0;
+temp(2) = 0;
+
+%% Source spatiale
+z0 = 1; % position du centre du domaine
+c0 = 1./sqrt(eps0*mu0); % vitesse de propagation
+vecz = (1:max_space-2)*dz;
+gamma2 = (vecz-z0)./c0;
+pulse2 = exp(-1*(gamma2./spread).^2);
+E(2:max_space-1) = pulse2;
+
+%% Discretisation suivant z
+for k=1:max_space
+    zE(k) = (k-1)*dz;
+end
+
+%% Boucle temporelle
+figure
 for n=1:max_time
     t = (n-1) * dt;
     
@@ -49,27 +68,35 @@ for n=1:max_time
     for k = 2:max_space - 1
         E(k) = E(k) + gamma * (H(k) - H(k-1));
     end
-
-    % Source
-    %E(center) = exp(-((t-t0)/spread) * ((t-t0)/spread));
     
-    % Hard source
+    % Source
     pulse = exp(-1*((t-t0)/spread)^2);
     E(center) = pulse;
 
+    E(1) = temp(1);
+    temp(1) = E(2);
+    E(max_space) = temp(2);
+    temp(2) = E(max_space-1);
+    
     % Calcul du champ magnétique
     for k = 1:max_space-1
         H(k) = H(k) + tau * (E(k+1) - E(k));
     end
+
+    % Visualisation des champs
+    subplot(1, 2, 1);
+    plot(zE, E)
+    title("Champ E", "alpha="+alpha+", time="+time)
+    ylabel("E [V/m]")
+    xlabel("z (position dans l'espace) [m]")
+    axis([0 2 -1.5 1.5])
+    
+    subplot(1, 2, 2);
+    plot(H)
+    title("Champ H")
+    ylabel("H [T]")
+    xlabel("z (position dans l'espace) [m]")
+    pause(0.1)
 end
 
-%% Visualisation des champs
-figure
-subplot(1, 2, 1);
-plot(E)
-title("Champ E")
-
-subplot(1, 2, 2);
-plot(H)
-title("Champ H")
 end
