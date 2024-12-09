@@ -43,7 +43,7 @@ temp(2) = 0;
 
 %% source
 start = 2;
-t0 = 40*dt;
+t0 = 400*dt;
 spread = 1.6e-11;
 
 %% Discretisation suivant z
@@ -93,11 +93,11 @@ for n=1:max_time
     area(zE, alphaEdielec-min(alphaEdielec), 'faceColor','c')
     hold on;
     plot(zE, E)
-    title(["Champ E", "\nalpha = " num2str(alpha) ", time = " num2str(time)])
+    title(["Champ E", "\nalpha = " num2str(alpha) ", max time = " num2str(max_time)])
     ylabel("E [V/m]")
     xlabel("z (position dans l'espace) [m]")
     axis([0 L -1.1 1.1])
-    pause(0.001)
+    pause(0.0001)
 end
 
 end
