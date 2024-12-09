@@ -51,7 +51,11 @@ for n=1:max_time
     end
 
     % Source
-    E(center) = exp(-((t-t0)/spread) * ((t-t0)/spread));
+    %E(center) = exp(-((t-t0)/spread) * ((t-t0)/spread));
+
+    % Hard source
+    pulse = exp(-1*((t-t0)/spread)^2);
+    E(center) = pulse;
 
     % Calcul du champ magnétique
     for k = 1:max_space-1
