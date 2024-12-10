@@ -2,7 +2,7 @@ function scriptFDTD05(time, alpha)
 %% Calcul FDTD (Finite Difference in Time Domain) - Magic-time step
 % Valeurs par défaut en cas de non arguments
 if nargin < 1
-    time = 1500;
+    time = 1000;
 end
 if nargin < 2
     alpha = 1;
@@ -56,7 +56,7 @@ dielec_deb = 200;
 dielec_fin = 300;
 
 for u=1:max_space
-  if (u>=dielec_deb & u<=dielec_fin)
+  if (u>=dielec_deb && u<=dielec_fin)
     alphaEdielec(u) = gamma./epsr;
   else
     alphaEdielec(u) = gamma;
@@ -88,12 +88,14 @@ for n=1:max_time
         H(k) = H(k) + tau * (E(k+1) - E(k));
     end
 
-    % Visualisation des champs
+    %{
+    Visualisation des champs
+    %}
     hold off;
     area(zE, alphaEdielec-min(alphaEdielec), 'faceColor','c')
     hold on;
     plot(zE, E)
-    title(["Champ E", "\nalpha = " num2str(alpha) ", max time = " num2str(max_time)])
+    title("Champ E", "alpha="+alpha+", max time="+max_time)
     ylabel("E [V/m]")
     xlabel("z (position dans l'espace) [m]")
     axis([0 L -1.1 1.1])
