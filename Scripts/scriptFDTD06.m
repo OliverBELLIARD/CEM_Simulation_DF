@@ -1,8 +1,8 @@
-function scriptFDTD05(time, alpha)
+function scriptFDTD06(time, alpha)
 %% Calcul FDTD (Finite Difference in Time Domain) - Magic-time step
 % Valeurs par défaut en cas de non arguments
 if nargin < 1
-    time = 1000;
+    time = 2500;
 end
 if nargin < 2
     alpha = 1;
@@ -10,7 +10,7 @@ end
 
 %% Définition des constantes
 eps0 = 8.854e-12;  % Permittivité du vide en F/m
-epsr = 4;
+epsr = 2.2;
 mu0 = 4*pi*1e-7;
 
 %% Maillage : discretisation spatiale
@@ -52,8 +52,8 @@ for k=1:max_space
 end
 
 %% Diélectrique
-dielec_deb = 200;
-dielec_fin = 300;
+dielec_deb = 250;
+dielec_fin = 350;
 
 alphaEdielec = gamma * ones(1, max_space);
 alphaEdielec(dielec_deb:dielec_fin) = gamma ./ epsr;

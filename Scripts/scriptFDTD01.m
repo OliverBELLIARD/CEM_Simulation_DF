@@ -66,15 +66,17 @@ for n=1:max_time
     %% Visualisation des champs
     subplot(1, 2, 1);
     plot(E)
-    title("Champ E", "alpha="+alpha+", time="+time)
+    title("Champ E", "alpha="+alpha+", time="+time+", t="+t+" s")
     ylabel("E [V/m]")
     xlabel("t")
+    axis([0 max_space -1.1 1.1])
 
     subplot(1, 2, 2);
     plot(H)
     title("Champ H")
     ylabel("H [T]")
     xlabel("t")
+
     pause(0.1)
 end
 

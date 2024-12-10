@@ -78,10 +78,10 @@ for n=1:max_time
 
     % Visualisation des champs
     plot(zE, E)
-    title("Champ E", "alpha="+alpha+", time="+time)
+    title("Champ E", "alpha="+alpha+", time="+time+", t="+t+" s")
     ylabel("E [V/m]")
     xlabel("z (position dans l'espace) [m]")
-    axis([0 2 -1.1 1.1])
+    axis([0 L -1.1 1.1])
     pause(0.05)
 end
 

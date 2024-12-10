@@ -1,8 +1,8 @@
-function scriptFDTD05(time, alpha)
+function scriptFDTD07(time, alpha)
 %% Calcul FDTD (Finite Difference in Time Domain) - Magic-time step
 % Valeurs par défaut en cas de non arguments
 if nargin < 1
-    time = 1000;
+    time = 3000;
 end
 if nargin < 2
     alpha = 1;
@@ -10,7 +10,7 @@ end
 
 %% Définition des constantes
 eps0 = 8.854e-12;  % Permittivité du vide en F/m
-epsr = 4;
+epsr = 2.2;
 mu0 = 4*pi*1e-7;
 
 %% Maillage : discretisation spatiale
@@ -52,8 +52,8 @@ for k=1:max_space
 end
 
 %% Diélectrique
-dielec_deb = 200;
-dielec_fin = 300;
+dielec_deb = 250;
+dielec_fin = 350;
 
 alphaEdielec = gamma * ones(1, max_space);
 alphaEdielec(dielec_deb:dielec_fin) = gamma ./ epsr;
@@ -61,8 +61,10 @@ alphaEdielec(dielec_deb:dielec_fin) = gamma ./ epsr;
 %% Coeffficients de réfléxion
 [R,T] = coefRT(1, epsr)
 
+%% Stockage des données pour le tracé 3D
+E_time = zeros(max_space, max_time); % Matrice pour stocker les champs à chaque instant
+
 %% Boucle temporelle
-figure
 for n=1:max_time
     t = (n-1) * dt;
 
@@ -86,19 +88,19 @@ for n=1:max_time
         H(k) = H(k) + tau * (E(k+1) - E(k));
     end
 
-    %{
-    Visualisation des champs
-    %}
-    hold off;
-    area(zE, alphaEdielec-min(alphaEdielec), 'faceColor','c')
-    hold on;
-    plot(zE, E)
-    title("Champ E", "alpha="+alpha+", max time="+max_time+", t="+t+" s")
-    ylabel("E [V/m]")
-    xlabel("z (position dans l'espace) [m]")
-    axis([0 L -1.1 1.1])
-
-    pause(0.0001)
+    % Stockage des champs pour le tracé 3D
+    E_time(:, n) = E;
 end
+
+%% Tracé 3D
+figure;
+[T, Z] = meshgrid((0:max_time-1) * dt, zE); % Maillage des temps et positions
+surf(T, Z, E_time, 'EdgeColor', 'none'); % Surface 3D sans bordures
+colorbar;
+title('Évolution du champ E');
+xlabel('Temps [s]');
+ylabel('Position z [m]');
+zlabel('Champ E [V/m]');
+view(45, 30); % Vue 3D personnalisée
 
 end
