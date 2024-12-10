@@ -10,12 +10,11 @@ end
 
 %% Définition des constantes
 eps0 = 8.854e-12;  % Permittivité du vide en F/m
-epsr = 2.2;
 mu0 = 4*pi*1e-7;
 
 %% Maillage : discretisation spatiale
-L = 0.5; % longueur du domaine de calcul
-max_space = 501; % nb de points spatiaux (nb de champ E)
+L = 2; % longueur du domaine de calcul
+max_space = 201; % nb de points spatiaux (nb de champ E)
 dz = L/(max_space-1);
 
 %% Discretisation temporelle;
@@ -37,29 +36,15 @@ E(max_space) = 0;
 gamma = -1/eps0 * dt/dz;
 tau = -1/mu0 * dt/dz;
 
-%% Conditions absorbantes
-temp(1) = 0;
-temp(2) = 0;
-
 %% source
-start = 2;
-t0 = 400*dt;
-spread = 1.6e-11;
+start = 100;
+t0 = 40*dt;
+spread = 1.6e-10;
 
 %% Discretisation suivant z
 for k=1:max_space
     zE(k) = (k-1)*dz;
 end
-
-%% Diélectrique
-dielec_deb = 250;
-dielec_fin = 350;
-
-alphaEdielec = gamma * ones(1, max_space);
-alphaEdielec(dielec_deb:dielec_fin) = gamma ./ epsr;
-
-%% Coeffficients de réfléxion
-[R,T] = coefRT(1, epsr)
 
 %% Stockage des données pour le tracé 3D
 E_time = zeros(max_space, max_time); % Matrice pour stocker les champs à chaque instant
@@ -70,18 +55,12 @@ for n=1:max_time
 
     % Equation : calcul du champ electrique
     for k = 2:max_space - 1
-        E(k) = E(k) + alphaEdielec(k)* (H(k) - H(k-1));
+        E(k) = E(k) + gamma * (H(k) - H(k-1));
     end
 
     % Soft source
     pulse = exp(-1*((t-t0)/spread)^2);
     E(start) = E(start) + pulse;
-
-    % Absorption aux limites
-    E(1) = temp(1);
-    temp(1) = E(2);
-    E(max_space) = temp(2);
-    temp(2) = E(max_space-1);
 
     % Calcul du champ magnétique
     for k = 1:max_space-1
