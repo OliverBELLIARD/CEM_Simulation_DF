@@ -19,7 +19,7 @@ dz = L/(max_space-1);
 
 %% Discretisation temporelle;
 %alpha = 1;
-max_time = time / alpha;
+max_time = 1000;
 dt = alpha * sqrt(eps0*mu0)*dz;
 
 %% Initialisation des champs E et H

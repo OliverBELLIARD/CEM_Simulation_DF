@@ -5,7 +5,7 @@ if nargin < 1
     time = 100;
 end
 if nargin < 2
-    alpha = 0.5;
+    alpha = 1;
 end
 
 %% Définition des constantes
@@ -19,7 +19,7 @@ dz = L/(max_space-1);
 
 %% Discretisation temporelle;
 %alpha = 1;
-max_time = time / alpha;
+max_time = 1000;
 dt = alpha * sqrt(eps0*mu0)*dz;
 
 %% Initialisation des champs E et H

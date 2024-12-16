@@ -98,7 +98,7 @@ for n=1:max_time
     xlabel("z (position dans l'espace) [m]")
     axis([0 L -1.1 1.1])
 
-    pause(0.0001)
+    pause(0.001)
 end
 
 end
